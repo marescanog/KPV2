@@ -38,11 +38,11 @@
                     "id": "130e5c78-9f47-47d8-925d-d29304872480",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Hold",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "CycleInventoryLeft",
+                    "name": "ToolToggle",
                     "type": "Button",
                     "id": "67f3015b-174c-4fa6-b94f-97122716848a",
                     "expectedControlType": "Button",
@@ -51,7 +51,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "CycleInventoryRight",
+                    "name": "EquipmentToggle",
                     "type": "Button",
                     "id": "e86dd1e2-a65d-4071-b940-2e0f35eaac23",
                     "expectedControlType": "Button",
@@ -60,18 +60,27 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "DropPickupItem",
-                    "type": "Button",
-                    "id": "e8e929d7-6091-431a-be77-270a434b5838",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "Tap",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "PickupHold",
                     "type": "Button",
                     "id": "46bdd1b9-9586-4e9e-8fde-d162df54ae75",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Hold",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "GetTool",
+                    "type": "Button",
+                    "id": "de75d3de-d719-4fa7-af83-1e37b0e4321b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UseTool",
+                    "type": "Button",
+                    "id": "e85b3b9a-5baf-4bf3-8ad1-39279ed644e7",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "Hold",
@@ -346,22 +355,22 @@
                 {
                     "name": "",
                     "id": "898f8285-3ce7-4efd-88b3-415604568c9d",
-                    "path": "<Gamepad>/leftShoulder",
+                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "CycleInventoryLeft",
+                    "action": "ToolToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "bac8cd4d-e9b5-48fd-89d5-d8c39bc07971",
-                    "path": "<Keyboard>/q",
+                    "id": "54e8428f-5c24-4d99-b47e-016a2bb3947f",
+                    "path": "<Keyboard>/t",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "CycleInventoryLeft",
+                    "action": "ToolToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -372,7 +381,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "CycleInventoryRight",
+                    "action": "EquipmentToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -383,29 +392,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "CycleInventoryRight",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d77fca34-e54b-48e7-a522-ce9b440ddf4b",
-                    "path": "<Keyboard>/c",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "DropPickupItem",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "505c066e-2ddf-44f0-bdac-b6aae5f766ea",
-                    "path": "<Gamepad>/buttonWest",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "DropPickupItem",
+                    "action": "EquipmentToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -428,6 +415,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "PickupHold",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "57a9a63b-ac56-42ee-ba7b-08402cd5b397",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GetTool",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b5e6ddc4-cac0-4d9d-9cc2-b493c1d3df01",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GetTool",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7997ce3b-dc42-47ba-b227-9456119f1017",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UseTool",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a9bd91b7-02ea-403c-9d91-7a19f3fb9962",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UseTool",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

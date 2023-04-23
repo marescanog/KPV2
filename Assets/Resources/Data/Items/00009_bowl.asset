@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a92bfbc7f52ce1f4bba3dd4cc8c617a0, type: 3}
-  m_Name: 00002_eggplant
+  m_Name: 00009_bowl
   m_EditorClassIdentifier: 
-  itemID: 2
-  itemName: Eggplant
-  itemCategory: 2
-  baseSprite: {fileID: 21300000, guid: 3b632a2ac4077b342901f5ef97cda7f3, type: 3}
+  itemID: 9
+  itemName: Bowl
+  itemCategory: 3
+  baseSprite: {fileID: 21300000, guid: e68b108f4ef72864b877aca926b503fd, type: 3}
   maxStackLimit: 1
   canBeContained: 1
-  size: 3
-  canDecay: 1
+  size: 1
+  canDecay: 0
   surfaceDisplayPosition: {x: 0, y: 0, z: 0}

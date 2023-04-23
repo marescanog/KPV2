@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class HUD_Inventory : MonoBehaviour
 {
     [SerializeField] private Image itemHand;
-    [SerializeField] private Image toolHand;
+    [SerializeField] private Image toolHand; 
     [SerializeField] private Image itemHandBG;
     [SerializeField] private Image toolHandBG;
 
@@ -14,12 +14,16 @@ public class HUD_Inventory : MonoBehaviour
     {
         Inventory.OnInventoryItemPickUp += DisplayOnItemHand;
         Inventory.OnInventoryItemDrop += HideFromItemHand;
+        Inventory.OnInventoryToolEquip += DisplayOnToolHand;
+        Inventory.OnInventoryToolDrop += HideFromToolHand;
     }
 
     private void OnDestroy()
     {
         Inventory.OnInventoryItemPickUp -= DisplayOnItemHand;
         Inventory.OnInventoryItemDrop -= HideFromItemHand;
+        Inventory.OnInventoryToolEquip -= DisplayOnToolHand;
+        Inventory.OnInventoryToolDrop -= HideFromToolHand;
     }
 
     private void DisplayOnItemHand(Sprite newSprite)
@@ -35,9 +39,25 @@ public class HUD_Inventory : MonoBehaviour
 
     private void HideFromItemHand()
     {
-        Debug.Log("HideFromItemHand");
         itemHand.sprite = GameAssets.i.placeholderSprite;
         itemHand.enabled = false;
         itemHandBG.enabled = false;
+    }
+
+    private void DisplayOnToolHand(Sprite newSprite)
+    {
+        if (!itemHand.isActiveAndEnabled)
+        {
+            toolHandBG.enabled = true;
+            toolHand.enabled = true;
+        }
+        toolHand.sprite = newSprite ?? GameAssets.i.placeholderSprite;
+    }
+
+    private void HideFromToolHand()
+    {
+        toolHand.sprite = GameAssets.i.placeholderSprite;
+        toolHand.enabled = false;
+        toolHandBG.enabled = false;
     }
 }
