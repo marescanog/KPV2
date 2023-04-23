@@ -9,14 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fc07301a7665904484e28b80a4aab60, type: 3}
-  m_Name: 00001_counter
+  m_Script: {fileID: 11500000, guid: e5843b346d8e1a74084548f7aa8e3285, type: 3}
+  m_Name: 00009_bowl
   m_EditorClassIdentifier: 
-  itemID: 1
-  maxPowerCapacity: 0
-  powerType: 0
-  applianceAction: 2
-  defaultCookResultType: 0
-  defaultHeldItem: 0
-  itemWhiteList: 
-  toolWhiteList: 0300000009000000
+  itemID: 9
+  itemFunctionRequirement: 
+  maxCapacity: 1
+  toolUseType: 1

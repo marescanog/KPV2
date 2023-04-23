@@ -36,55 +36,62 @@ namespace GameConstants
         }
     }
 
-    public static class Temp
+    namespace CookingSystem
     {
-        public const int MAX = 6000;
-        public const int START_COOK = 1600;
-
-        public const int HIGH = 4250;
-        public const int MEDIUM = 3500;
-        public const int MEDLOW = 3000;
-        public const int LOW = 1800;
-
-        public const int HIGH_MAX = 4500;
-        public const int MEDIUM_MAX = 3750;
-        public const int MEDLOW_MAX = 3250;
-        public const int LOW_MAX = 2000;
-
-        public const int SEAR = 4000;
-        public const int BOIL = 2100;    // Liquids do evaporate
-        public const int SIMMER = 1800;  // Liquids do not evaporate
-
-        public const int FOOD_HOT_HOLDING = 1350; // above no bacteria grows
-        public const int FOOD_ROOM_TEMP = 700;    // starting food temperature
-        public const int FOOD_COLD_HOLDING = 400; // below no bacteria grows
-        public const int FOOD_FROZEN = -100;
-
-        public static int CookTime(int temp)
+        public static class Temp
         {
-            if(temp >= HIGH_MAX)
+            public const int MAX = 6000;
+            public const int START_COOK = 1600;
+
+            public const int HIGH = 4250;
+            public const int MEDIUM = 3500;
+            public const int MEDLOW = 3000;
+            public const int LOW = 1800;
+
+            public const int HIGH_MAX = 4500;
+            public const int MEDIUM_MAX = 3750;
+            public const int MEDLOW_MAX = 3250;
+            public const int LOW_MAX = 2000;
+
+            public const int SEAR = 4000;
+            public const int BOIL = 2100;    // Liquids do evaporate
+            public const int SIMMER = 1800;  // Liquids do not evaporate
+
+            public const int FOOD_HOT_HOLDING = 1350; // above no bacteria grows
+            public const int FOOD_ROOM_TEMP = 700;    // starting food temperature
+            public const int FOOD_COLD_HOLDING = 400; // below no bacteria grows
+            public const int FOOD_FROZEN = -100;
+
+            public static int CookTime(int temp)
             {
-                return 30;
-            } else if (temp >= HIGH)
-            {
-                return 20;
-            }
-            else if (temp >= MEDIUM)
-            {
-                return 10;
-            }
-            else if (temp >= LOW_MAX)
-            {
-                return 7;
-            }
-            else if (temp >= LOW)
-            {
-                return 5;
-            } else
-            {
-                return 0;
+                if (temp >= HIGH_MAX)
+                {
+                    return 30;
+                }
+                else if (temp >= HIGH)
+                {
+                    return 20;
+                }
+                else if (temp >= MEDIUM)
+                {
+                    return 10;
+                }
+                else if (temp >= LOW_MAX)
+                {
+                    return 7;
+                }
+                else if (temp >= LOW)
+                {
+                    return 5;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
+
+
     }
 }
 

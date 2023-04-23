@@ -8,7 +8,8 @@ public class GameAssets : MonoBehaviour
     private static GameAssets _i; 
     private static Dictionary<int, SO_Item> _itemBase = new Dictionary<int, SO_Item>(); // RO
     private static Dictionary<int, SO_Appliance> _applianceBase = new Dictionary<int, SO_Appliance>();
-
+    private static Dictionary<int, SO_Tool> _toolBase = new Dictionary<int, SO_Tool>();
+    private static Dictionary<int, SO_Food> _foodBase = new Dictionary<int, SO_Food>();
 
     public static GameAssets i { get {
             if ( _i == null) { _i = Instantiate(Resources.Load<GameAssets>("Prefabs/Managers/GameAssets")); }
@@ -31,7 +32,41 @@ public class GameAssets : MonoBehaviour
     {
         LoadItemData();
         LoadApplianceData();
+        LoadToolData();
+        LoadFoodData();
         // LoadCookingSOData();
+    }
+
+    private void LoadFoodData()
+    {
+        UnityEngine.Object[] foodBases = Resources.LoadAll("Data/Food", typeof(SO_Food));
+        foreach (SO_Food foodBase in foodBases)
+        {
+            if (!_applianceBase.ContainsKey(foodBase.itemID))
+            {
+                _foodBase.Add(foodBase.itemID, foodBase);
+            }
+            else
+            {
+                Debug.LogError("GameAssets(LoadApplianceData): Dictionary foodBases already contains key for " + foodBase.name + ". (" + foodBase.itemID + ", " + foodBases[foodBase.itemID].name + ")");
+            }
+        }
+    }
+
+    private void LoadToolData()
+    {
+        UnityEngine.Object[] toolBases = Resources.LoadAll("Data/Tool", typeof(SO_Tool));
+        foreach (SO_Tool toolBase in toolBases)
+        {
+            if (!_applianceBase.ContainsKey(toolBase.itemID))
+            {
+                _toolBase.Add(toolBase.itemID, toolBase);
+            }
+            else
+            {
+                Debug.LogError("GameAssets(LoadApplianceData): Dictionary toolBases already contains key for " + toolBase.name + ". (" + toolBase.itemID + ", " + toolBases[toolBase.itemID].name + ")");
+            }
+        }
     }
 
     private void LoadApplianceData()
@@ -45,7 +80,7 @@ public class GameAssets : MonoBehaviour
             }
             else
             {
-                Debug.LogError("GameAssets(LoadApplianceData): Dictionary itemBases already contains key for " + applianceBase.name + ". (" + applianceBase.itemID + ", " + applianceBases[applianceBase.itemID].name + ")");
+                Debug.LogError("GameAssets(LoadApplianceData): Dictionary applianceBases already contains key for " + applianceBase.name + ". (" + applianceBase.itemID + ", " + applianceBases[applianceBase.itemID].name + ")");
             }
         }
     }
@@ -86,6 +121,20 @@ public class GameAssets : MonoBehaviour
     {
         SO_Appliance result;
         _applianceBase.TryGetValue(itemID, out result);
+        return result;
+    }
+
+    public static SO_Tool ToolDataReadOnly(int itemID)
+    {
+        SO_Tool result;
+        _toolBase.TryGetValue(itemID, out result);
+        return result;
+    }
+
+    public static SO_Food FoodDataReadOnly(int itemID)
+    {
+        SO_Food result;
+        _foodBase.TryGetValue(itemID, out result);
         return result;
     }
 }

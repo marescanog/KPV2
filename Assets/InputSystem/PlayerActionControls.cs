@@ -60,11 +60,11 @@ public partial class @PlayerActionControls : IInputActionCollection2, IDisposabl
                     ""id"": ""130e5c78-9f47-47d8-925d-d29304872480"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Hold"",
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""CycleInventoryLeft"",
+                    ""name"": ""ToolToggle"",
                     ""type"": ""Button"",
                     ""id"": ""67f3015b-174c-4fa6-b94f-97122716848a"",
                     ""expectedControlType"": ""Button"",
@@ -73,7 +73,7 @@ public partial class @PlayerActionControls : IInputActionCollection2, IDisposabl
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""CycleInventoryRight"",
+                    ""name"": ""EquipmentToggle"",
                     ""type"": ""Button"",
                     ""id"": ""e86dd1e2-a65d-4071-b940-2e0f35eaac23"",
                     ""expectedControlType"": ""Button"",
@@ -82,18 +82,27 @@ public partial class @PlayerActionControls : IInputActionCollection2, IDisposabl
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""DropPickupItem"",
-                    ""type"": ""Button"",
-                    ""id"": ""e8e929d7-6091-431a-be77-270a434b5838"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": ""Tap"",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""PickupHold"",
                     ""type"": ""Button"",
                     ""id"": ""46bdd1b9-9586-4e9e-8fde-d162df54ae75"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Hold"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""GetTool"",
+                    ""type"": ""Button"",
+                    ""id"": ""de75d3de-d719-4fa7-af83-1e37b0e4321b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UseTool"",
+                    ""type"": ""Button"",
+                    ""id"": ""e85b3b9a-5baf-4bf3-8ad1-39279ed644e7"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""Hold"",
@@ -368,22 +377,22 @@ public partial class @PlayerActionControls : IInputActionCollection2, IDisposabl
                 {
                     ""name"": """",
                     ""id"": ""898f8285-3ce7-4efd-88b3-415604568c9d"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""CycleInventoryLeft"",
+                    ""action"": ""ToolToggle"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""bac8cd4d-e9b5-48fd-89d5-d8c39bc07971"",
-                    ""path"": ""<Keyboard>/q"",
+                    ""id"": ""54e8428f-5c24-4d99-b47e-016a2bb3947f"",
+                    ""path"": ""<Keyboard>/t"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""CycleInventoryLeft"",
+                    ""action"": ""ToolToggle"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -394,7 +403,7 @@ public partial class @PlayerActionControls : IInputActionCollection2, IDisposabl
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""CycleInventoryRight"",
+                    ""action"": ""EquipmentToggle"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -405,29 +414,7 @@ public partial class @PlayerActionControls : IInputActionCollection2, IDisposabl
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""CycleInventoryRight"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""d77fca34-e54b-48e7-a522-ce9b440ddf4b"",
-                    ""path"": ""<Keyboard>/c"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""DropPickupItem"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""505c066e-2ddf-44f0-bdac-b6aae5f766ea"",
-                    ""path"": ""<Gamepad>/buttonWest"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""DropPickupItem"",
+                    ""action"": ""EquipmentToggle"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -450,6 +437,50 @@ public partial class @PlayerActionControls : IInputActionCollection2, IDisposabl
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""PickupHold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""57a9a63b-ac56-42ee-ba7b-08402cd5b397"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GetTool"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b5e6ddc4-cac0-4d9d-9cc2-b493c1d3df01"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GetTool"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7997ce3b-dc42-47ba-b227-9456119f1017"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseTool"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a9bd91b7-02ea-403c-9d91-7a19f3fb9962"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseTool"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1345,10 +1376,11 @@ public partial class @PlayerActionControls : IInputActionCollection2, IDisposabl
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_ToggleInventory = m_Player.FindAction("ToggleInventory", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
-        m_Player_CycleInventoryLeft = m_Player.FindAction("CycleInventoryLeft", throwIfNotFound: true);
-        m_Player_CycleInventoryRight = m_Player.FindAction("CycleInventoryRight", throwIfNotFound: true);
-        m_Player_DropPickupItem = m_Player.FindAction("DropPickupItem", throwIfNotFound: true);
+        m_Player_ToolToggle = m_Player.FindAction("ToolToggle", throwIfNotFound: true);
+        m_Player_EquipmentToggle = m_Player.FindAction("EquipmentToggle", throwIfNotFound: true);
         m_Player_PickupHold = m_Player.FindAction("PickupHold", throwIfNotFound: true);
+        m_Player_GetTool = m_Player.FindAction("GetTool", throwIfNotFound: true);
+        m_Player_UseTool = m_Player.FindAction("UseTool", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1432,10 +1464,11 @@ public partial class @PlayerActionControls : IInputActionCollection2, IDisposabl
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_ToggleInventory;
     private readonly InputAction m_Player_Interact;
-    private readonly InputAction m_Player_CycleInventoryLeft;
-    private readonly InputAction m_Player_CycleInventoryRight;
-    private readonly InputAction m_Player_DropPickupItem;
+    private readonly InputAction m_Player_ToolToggle;
+    private readonly InputAction m_Player_EquipmentToggle;
     private readonly InputAction m_Player_PickupHold;
+    private readonly InputAction m_Player_GetTool;
+    private readonly InputAction m_Player_UseTool;
     public struct PlayerActions
     {
         private @PlayerActionControls m_Wrapper;
@@ -1444,10 +1477,11 @@ public partial class @PlayerActionControls : IInputActionCollection2, IDisposabl
         public InputAction @Look => m_Wrapper.m_Player_Look;
         public InputAction @ToggleInventory => m_Wrapper.m_Player_ToggleInventory;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
-        public InputAction @CycleInventoryLeft => m_Wrapper.m_Player_CycleInventoryLeft;
-        public InputAction @CycleInventoryRight => m_Wrapper.m_Player_CycleInventoryRight;
-        public InputAction @DropPickupItem => m_Wrapper.m_Player_DropPickupItem;
+        public InputAction @ToolToggle => m_Wrapper.m_Player_ToolToggle;
+        public InputAction @EquipmentToggle => m_Wrapper.m_Player_EquipmentToggle;
         public InputAction @PickupHold => m_Wrapper.m_Player_PickupHold;
+        public InputAction @GetTool => m_Wrapper.m_Player_GetTool;
+        public InputAction @UseTool => m_Wrapper.m_Player_UseTool;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1469,18 +1503,21 @@ public partial class @PlayerActionControls : IInputActionCollection2, IDisposabl
                 @Interact.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
                 @Interact.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
                 @Interact.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
-                @CycleInventoryLeft.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCycleInventoryLeft;
-                @CycleInventoryLeft.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCycleInventoryLeft;
-                @CycleInventoryLeft.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCycleInventoryLeft;
-                @CycleInventoryRight.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCycleInventoryRight;
-                @CycleInventoryRight.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCycleInventoryRight;
-                @CycleInventoryRight.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCycleInventoryRight;
-                @DropPickupItem.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDropPickupItem;
-                @DropPickupItem.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDropPickupItem;
-                @DropPickupItem.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDropPickupItem;
+                @ToolToggle.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToolToggle;
+                @ToolToggle.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToolToggle;
+                @ToolToggle.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToolToggle;
+                @EquipmentToggle.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnEquipmentToggle;
+                @EquipmentToggle.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnEquipmentToggle;
+                @EquipmentToggle.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnEquipmentToggle;
                 @PickupHold.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPickupHold;
                 @PickupHold.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPickupHold;
                 @PickupHold.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPickupHold;
+                @GetTool.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGetTool;
+                @GetTool.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGetTool;
+                @GetTool.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGetTool;
+                @UseTool.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUseTool;
+                @UseTool.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUseTool;
+                @UseTool.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUseTool;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -1497,18 +1534,21 @@ public partial class @PlayerActionControls : IInputActionCollection2, IDisposabl
                 @Interact.started += instance.OnInteract;
                 @Interact.performed += instance.OnInteract;
                 @Interact.canceled += instance.OnInteract;
-                @CycleInventoryLeft.started += instance.OnCycleInventoryLeft;
-                @CycleInventoryLeft.performed += instance.OnCycleInventoryLeft;
-                @CycleInventoryLeft.canceled += instance.OnCycleInventoryLeft;
-                @CycleInventoryRight.started += instance.OnCycleInventoryRight;
-                @CycleInventoryRight.performed += instance.OnCycleInventoryRight;
-                @CycleInventoryRight.canceled += instance.OnCycleInventoryRight;
-                @DropPickupItem.started += instance.OnDropPickupItem;
-                @DropPickupItem.performed += instance.OnDropPickupItem;
-                @DropPickupItem.canceled += instance.OnDropPickupItem;
+                @ToolToggle.started += instance.OnToolToggle;
+                @ToolToggle.performed += instance.OnToolToggle;
+                @ToolToggle.canceled += instance.OnToolToggle;
+                @EquipmentToggle.started += instance.OnEquipmentToggle;
+                @EquipmentToggle.performed += instance.OnEquipmentToggle;
+                @EquipmentToggle.canceled += instance.OnEquipmentToggle;
                 @PickupHold.started += instance.OnPickupHold;
                 @PickupHold.performed += instance.OnPickupHold;
                 @PickupHold.canceled += instance.OnPickupHold;
+                @GetTool.started += instance.OnGetTool;
+                @GetTool.performed += instance.OnGetTool;
+                @GetTool.canceled += instance.OnGetTool;
+                @UseTool.started += instance.OnUseTool;
+                @UseTool.performed += instance.OnUseTool;
+                @UseTool.canceled += instance.OnUseTool;
             }
         }
     }
@@ -1742,10 +1782,11 @@ public partial class @PlayerActionControls : IInputActionCollection2, IDisposabl
         void OnLook(InputAction.CallbackContext context);
         void OnToggleInventory(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
-        void OnCycleInventoryLeft(InputAction.CallbackContext context);
-        void OnCycleInventoryRight(InputAction.CallbackContext context);
-        void OnDropPickupItem(InputAction.CallbackContext context);
+        void OnToolToggle(InputAction.CallbackContext context);
+        void OnEquipmentToggle(InputAction.CallbackContext context);
         void OnPickupHold(InputAction.CallbackContext context);
+        void OnGetTool(InputAction.CallbackContext context);
+        void OnUseTool(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

@@ -25,8 +25,17 @@ public class Item : MonoBehaviour
     public Material Material { get; private set; }
 
     public ItemCategory ItemCategory_My { get { return GameAssets.ItemDataReadOnly(ItemID)?.itemCategory ?? ItemCategory.None; } }
-    public Sprite Sprite_My { get { return GameAssets.ItemDataReadOnly(ItemID)?.baseSprite ?? GameAssets.i.placeholderSprite; } }
+    public Sprite Sprite_My { get { 
+            if (ItemCategory_My == ItemCategory.Food)
+            {
+                return Food.GetSprite() ?? GameAssets.i.placeholderSprite;
+            } else
+            {
+                return GameAssets.ItemDataReadOnly(ItemID)?.baseSprite ?? GameAssets.i.placeholderSprite;
+            }
+        } }
     public string Name_My { get { return GameAssets.ItemDataReadOnly(ItemID)?.itemName ?? "No_Name_Set_In_Item_ScriptableObject"; } }
+
     /*
     public Item(SO_Item item)
     {
@@ -48,18 +57,64 @@ public class Item : MonoBehaviour
 
     void OnDisable()
     {
-        Debug.Log("Item(OnDisable): script was disabled");
+        // Debug.Log("Item(OnDisable): script was disabled");
     }
 
     void OnEnable()
     {
-        Debug.Log("Item(OnDisable): script was enabled");
+        // Debug.Log("Item(OnDisable): script was enabled");
     }
 
     public void SetItemData()
     {
         // Food, appliance, tool, etc specific data?
         // we will see if this function is still needed or not
+    }
+
+
+    public void SetItem(Vector3 location, int itemID)
+    {
+        SO_Item itemReadOnlyData = GameAssets.ItemDataReadOnly(itemID);
+        if (itemReadOnlyData)
+        {
+            ItemID = itemID;
+            _transform.localPosition = location;
+            _spriteRenderer.sprite = itemReadOnlyData.baseSprite;
+            _surfaceDisplayTransform.localPosition = itemReadOnlyData.surfaceDisplayPosition;
+            DisableAllItemProperties();
+            switch (itemReadOnlyData.itemCategory)
+            {
+                case ItemCategory.Appliance:
+                    // Debug.Log("Item(SetItem): This Item is an Appliance");
+                    _appliance.enabled = true;
+                    _appliance.SetApplianceData(GameAssets.ApplianceDataReadOnly(itemID), itemID);
+                    break;
+                case ItemCategory.Food:
+                    // Debug.Log("Item(SetItem): This Item is Food");
+                    _food.enabled = true;
+                    _food.SetFoodData(GameAssets.FoodDataReadOnly(itemID), itemID);
+                    break;
+                case ItemCategory.Material:
+                    // Debug.Log("Item(SetItem): This Item is a Material");
+                    _material.enabled = true;
+                    break;
+                case ItemCategory.Tool:
+                    // Debug.Log("Item(SetItem): This Item is a Tool");
+                    _tool.enabled = true;
+                    _tool.SetToolData(GameAssets.ToolDataReadOnly(itemID), itemID);
+                    break;
+            }
+        }
+        else
+        {
+            Debug.LogError($"Item(SetItem): Sprite not found in GameAssets _itemBase dictionary for item ID {itemID}");
+        }
+
+    }
+
+    public void UpdateSprite(Sprite newSprite)
+    {
+        _spriteRenderer.sprite = newSprite;
     }
 
     public void SetSurfaceSprite(Sprite newSprite)
@@ -149,42 +204,14 @@ public class Item : MonoBehaviour
         return isSuccess;
     }
 
-    public void SetItem(Vector3 location, int itemID)
+    public void UseTool(Item itemInFront)
     {
-        SO_Item itemReadOnlyData = GameAssets.ItemDataReadOnly(itemID);
-        if (itemReadOnlyData)
+        Debug.Log("Item(UseTool)");
+        if (ItemCategory_My == ItemCategory.Tool)
         {
-            ItemID = itemID;
-            _transform.localPosition = location;
-            _spriteRenderer.sprite = itemReadOnlyData.baseSprite;
-            _surfaceDisplayTransform.localPosition = itemReadOnlyData.surfaceDisplayPosition;
-            DisableAllItemProperties();
-            switch (itemReadOnlyData.itemCategory)
-            {
-                case ItemCategory.Appliance:
-                    Debug.Log("Item(SetItem): This Item is an Appliance");
-                    _appliance.enabled = true;
-                    _appliance.SetApplianceData(GameAssets.ApplianceDataReadOnly(itemID));
-                    break;
-                case ItemCategory.Food:
-                    Debug.Log("Item(SetItem): This Item is Food");
-                    _food.enabled = true;
-                    break;
-                case ItemCategory.Material:
-                    Debug.Log("Item(SetItem): This Item is a Material");
-                    _material.enabled = true;
-                    break;
-                case ItemCategory.Tool:
-                    Debug.Log("Item(SetItem): This Item is a Tool");
-                    _tool.enabled = true;
-                    break;
-            }
+            Tool.Use(itemInFront);
         }
-        else
-        {
-            Debug.LogError($"Item(SetItem): Sprite not found in GameAssets _itemBase dictionary for item ID {itemID}");
-        }
-        
+
     }
 
     private void DisableAllItemProperties()

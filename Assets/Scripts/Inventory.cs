@@ -5,14 +5,28 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
+    public static event Action<Sprite> OnInventoryItemPickUp;
+    public static event Action OnInventoryItemDrop;
+    public static event Action<Sprite> OnInventoryToolEquip;
+    public static event Action OnInventoryToolDrop;
+
     public Item ItemHandItem { get; private set; } // _equipslot_itemHand_left
     public Item ToolHandItem { get; private set; } //_equipslot_toolHand_right
     RaycastHit2D[] m_Results = new RaycastHit2D[5];
-    // To add Inventory List Dictionary
 
-    public static event Action<Sprite> OnInventoryItemPickUp;
-    public static event Action OnInventoryItemDrop; 
+    private List<Item> _itemList = new List<Item>();
+    private List<Item> _toolList = new List<Item>();
+    public List<Item> ItemList { get; private set; } // _equipslot_itemHand_left
+    public List<Item> ToolList { get; private set; } // _equipslot_toolHand_right
+    
+    private int _maxInventoryCapacity = 4; // Rucksack
+    // private int _maxToolCapacity = 2; // Toolbelt
 
+    private void Awake()
+    {
+        ItemList = _itemList;
+        ToolList = _toolList;
+    }
     public Item UnequipItem()
     {
         Item oldItem = ItemHandItem;
@@ -235,5 +249,179 @@ public class Inventory : MonoBehaviour
 
 
         return isSuccess;
+    }
+
+    public bool ToggleEquippedItemHand()
+    {
+        bool isSuccess = false;
+
+        /*
+            What do you want accomplished?
+            If Player has item on HandItem
+                If Item List is not full
+                    Add to end of list
+            If Player does not have item on HandItem
+                If ItemList has an item
+                    Remove Item from the start of List
+        */
+
+
+        // GET ITEM 
+        if(ItemHandItem == null)
+        {
+            Debug.Log("Inventory(ToggleEquippedItemHand): ItemHand is empty. Pull Item from Inventory list.");
+
+            if(ItemList.Count != 0)
+            {
+                if (TryEquipItem(ItemList[0]))
+                {
+                    ItemList.RemoveAt(0);
+                    OnInventoryItemPickUp?.Invoke(ItemHandItem.Sprite_My);
+                    isSuccess = true;
+                }          
+            } else
+            {
+                Debug.Log("Inventory(ToggleEquippedItemHand): Cannot pull item from empty list.");
+            }
+        }
+        // STORE ITEM 
+        else
+        {
+            Debug.Log("Inventory(ToggleEquippedItemHand): ItemHand has item. Place Item into Inventory list.");
+            // Check if item is an appliance, cannot add appliances to inventory?
+            // Check if appliance is tool? Seperate list?
+
+            // Debug.Log($"ItemListCount {ItemList.Count} < InventoryCap {_maxInventoryCapacity} == {ItemList.Count < _maxInventoryCapacity}");
+            if (ItemList.Count < _maxInventoryCapacity)
+            {
+                if(ItemHandItem.ItemCategory_My != ItemCategory.Appliance)
+                {
+                    ItemList.Add(ItemHandItem);
+                    ItemHandItem = null;
+                    OnInventoryItemDrop?.Invoke(); // Clear Canvas HUD
+                    isSuccess = true;
+                } else
+                {
+                    Debug.Log("Inventory(ToggleEquippedItemHand): Cannot place Appliance Item into Inventory List.");
+                    // Maybe swap items like tools swap ? 
+                }
+            }
+            else
+            {
+                // Debug.Log("Inventory(ToggleEquippedItemHand): Cannot place item into Full Inventory List.");
+            }
+        }
+
+        return isSuccess;
+    }
+
+    public bool ToggleEquippedToolHand()
+    {
+        bool isSuccess = false;
+
+        // GET TOOL (from Toolbelt) 
+
+        if(ItemHandItem == null)
+        {
+            Debug.Log("Inventory(ToggleEquippedItemHand): ItemHand is empty. Pull Item from Inventory list.");
+
+            if(ToolList.Count != 0)
+            {
+                /*
+                if (TryEquipItem(ToolList[0])) // Change Try Equip Tool? 
+                {
+                    ToolList.RemoveAt(0);
+                    OnInventoryItemPickUp?.Invoke(ItemHandItem.Sprite_My);
+                    isSuccess = true;
+                }   
+                */
+            }
+            else
+            {
+                Debug.Log("Inventory(ToggleEquippedItemHand): Cannot pull item from empty list.");
+            }
+        }
+        /*
+            // STORE TOOL (from Toolbelt) 
+            else
+            {
+                Debug.Log("Inventory(ToggleEquippedItemHand): ItemHand has item. Place Item into Inventory list.");
+                // Check if item is an appliance, cannot add appliances to inventory?
+                // Check if appliance is tool? Seperate list?
+
+                // Debug.Log($"ItemListCount {ItemList.Count} < InventoryCap {_maxInventoryCapacity} == {ItemList.Count < _maxInventoryCapacity}");
+                if (ItemList.Count < _maxInventoryCapacity)
+                {
+                    if(ItemHandItem.ItemCategory_My != ItemCategory.Appliance)
+                    {
+                        ItemList.Add(ItemHandItem);
+                        ItemHandItem = null;
+                        OnInventoryItemDrop?.Invoke(); // Clear Canvas HUD
+                        isSuccess = true;
+                    } else
+                    {
+                        // Debug.Log("Inventory(ToggleEquippedItemHand): Cannot place Appliance Item into Inventory List.");
+                    }
+                }
+                else
+                {
+                    // Debug.Log("Inventory(ToggleEquippedItemHand): Cannot place item into Full Inventory List.");
+                }
+            } 
+        */
+
+        return isSuccess;
+    }
+
+    public void ToggleFetchTool()
+    {
+        if (ItemHandItem == null || (ItemHandItem.Tool != null && ItemHandItem.Tool?.isActiveAndEnabled == true))
+        {
+            Debug.Log("Inventory(ToggleFetchTool): Swapping Itemhand and Tool");
+            SwapItemHandWithToolHand();
+        }
+
+        if(ItemHandItem != null)
+        {
+            if (!(ItemHandItem.Tool != null && ItemHandItem.Tool?.isActiveAndEnabled == true))
+            {
+                Debug.Log("Inventory(ToggleFetchTool): Cannot Swap Itemhand with Non Tool");
+            }
+        }
+    }
+
+    private void SwapItemHandWithToolHand()
+    {
+        Debug.Log("Inventory(SwapItemHandWithToolHand)");
+
+        Item temp = ItemHandItem;
+
+        // Debug.Log($"Before Swap: ItemHand: {ItemHandItem?.Name_My??"NULL"} - ToolHand: {ToolHandItem?.Name_My??"NULL"}");
+        
+        // Transfer Tool to ItemHand
+        if (ToolHandItem == null)
+        {
+            ItemHandItem = null;
+            OnInventoryItemDrop?.Invoke(); 
+        }
+        else
+        {
+            ItemHandItem = ToolHandItem;
+            OnInventoryItemPickUp?.Invoke(ToolHandItem.Sprite_My);
+        }
+
+        // Transfer Tool to ToolHand
+        if (temp == null)
+        {
+            ToolHandItem = null;
+            OnInventoryToolDrop?.Invoke();
+        } else
+        {
+            ToolHandItem = temp;
+            OnInventoryToolEquip?.Invoke(temp.Sprite_My);
+        }
+
+        // Debug.Log($"After Swap: ItemHand:{ItemHandItem?.Name_My ?? " NULL"} - ToolHand{ToolHandItem?.Name_My ?? " NULL"}");
+
     }
 }
