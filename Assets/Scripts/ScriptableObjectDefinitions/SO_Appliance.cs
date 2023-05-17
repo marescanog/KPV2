@@ -14,5 +14,6 @@ public class SO_Appliance : ScriptableObject
     public CookResultType defaultCookResultType;
     public int defaultHeldItem;
     public List<int> itemWhiteList = new List<int>();
+    public List<int> attachmentWhiteList = new List<int>(); // always a tool ?
     public List<int> toolWhiteList = new List<int>();
 }

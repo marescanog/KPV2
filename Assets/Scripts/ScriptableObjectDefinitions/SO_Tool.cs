@@ -13,4 +13,5 @@ public class SO_Tool : ScriptableObject
     // public List<int> applianceAttach = new List<int>(); // items the tool can attach to
     public int maxCapacity; // if 0 then it is not a vessel for storing items
     public ToolUseType toolUseType;
+    public bool canUseWithoutAppliance;
 }

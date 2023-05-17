@@ -16,15 +16,19 @@ public class ItemManager : MonoBehaviour
     private void Start()
     {
         // Maybe Pool Items instead of instantiating (Later)
-        GenerateItem(1, new Vector3(-1, -5, 0));
-        GenerateItem(1, new Vector3(2, -5, 0));
-        GenerateItem(2, new Vector3(-1, -6.5f, 0));
-        GenerateItem(3, new Vector3(-1, -7.5f, 0));
-        GenerateItem(6, new Vector3(-2, -7.5f, 0));
-        GenerateItem(7, new Vector3(-3, -7.5f, 0));
-        GenerateItem(8, new Vector3(-4, -7.5f, 0));
-        GenerateItem(5, new Vector3(2, -6.5f, 0));
-        GenerateItem(9, new Vector3(3, -6.5f, 0));
+         GenerateItem(1, new Vector3(-1, -5, 0));
+        // GenerateItem(1, new Vector3(2, -5, 0));
+        GenerateItem(2, new Vector3(-1, -6.5f, 0)); // eggplant
+        GenerateItem(3, new Vector3(-1, -7.5f, 0)); // knife
+         GenerateItem(6, new Vector3(-2, -7.5f, 0));
+         GenerateItem(7, new Vector3(-3, -7.5f, 0));
+         GenerateItem(8, new Vector3(-4, -7.5f, 0));
+         GenerateItem(5, new Vector3(2, -6.5f, 0));
+        GenerateItem(9, new Vector3(3, -6.5f, 0)); // bowl
+
+         GenerateItem(10, new Vector3(-5, -5, 0)); //mixer
+
+         GenerateItem(11, new Vector3(-6.5f, -6.5f, 0)); // bowl mixer
     }
 
     public static Item GenerateItem(int itemID, Vector3 position)
