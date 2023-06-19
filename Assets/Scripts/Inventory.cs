@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-    public static event Action<Sprite> OnInventoryItemPickUp;
+    public static event Action<Sprite, MaskRendererSpriteAssets> OnInventoryItemPickUp;
     public static event Action OnInventoryItemDrop;
     public static event Action<Sprite> OnInventoryToolEquip;
     public static event Action OnInventoryToolDrop;
@@ -158,6 +158,8 @@ public class Inventory : MonoBehaviour
                 Vector3 offSetDropposition = new Vector3(playerFaceDirection.x* offsetDrop, playerFaceDirection.y * offsetDrop, 0);
                 ItemHandItem.EnableUICollider(playerPosition+ offSetDropposition);
                 isSuccess = true;
+
+                // if the item is a tool, then enable
             } 
         }
 
@@ -174,14 +176,14 @@ public class Inventory : MonoBehaviour
     {
         bool isSuccess = false;
         Sprite spriteToEquip = itemInFront?.Sprite_My;
-
+        MaskRendererSpriteAssets maskRendererAssets = null;
         if (itemInFront)
         {
             Debug.Log("Inventory(PickupItem): 2.1 - item is in front of player");
             if (buttonHeld)
             {
                 // check if item is appliance
-                Debug.Log("Inventory(PickupItem): Hold Button is pressed");
+                Debug.Log("Inventory(PickupItem): [buttonHeld] Hold Button is pressed");
 
                 if (itemInFront?.Appliance?.isActiveAndEnabled == true)
                 {
@@ -198,9 +200,10 @@ public class Inventory : MonoBehaviour
           
                     }
                     */
-                    Debug.Log("Player(OnPickupHold) : You are picking up an appliance");
+                    Debug.Log("Inventory(PickupItem) : [buttonHeld] You are picking up an appliance");
 
                     isSuccess = TryEquipItem(itemInFront); // returns a bool true if equipped and false if not
+
                 } 
             }
             else
@@ -211,28 +214,76 @@ public class Inventory : MonoBehaviour
                 // Maybe change to switch statement with item categories?
                 if (itemInFront?.Food?.isActiveAndEnabled == true)
                 {
-                    Debug.Log("Player(PickupItem) : You are picking up Food");
+                    Debug.Log("Inventory(PickupItem) : You are picking up Food");
 
                     isSuccess = TryEquipItem(itemInFront); // returns a bool true if equipped and false if not
+
+                    if (isSuccess)
+                    {
+                        // maskRendererAssets = null;
+                    }
                 }
 
                 if (itemInFront?.Tool?.isActiveAndEnabled == true)
                 {
-                    Debug.Log("Player(PickupItem) : You are picking up a tool");
+                    Debug.Log("Inventory(PickupItem) : You are picking up a tool");
 
                     isSuccess = TryEquipItem(itemInFront); // returns a bool true if equipped and false if not
+
+                    if (isSuccess)
+                    {
+                        itemInFront.Tool?.DisableMask();
+                        maskRendererAssets = itemInFront.GetMaskRendererSpriteAssets();
+                    }
                 }
 
                 if (itemInFront?.Appliance?.isActiveAndEnabled == true)
                 {
-                    Item applianceItemHeld = itemInFront.Appliance.ItemHeld;
-                    Debug.Log($"Player(PickupItem) : You are picking the item({applianceItemHeld?.Name_My??"NULL"}) that is on the appliance({itemInFront?.Name_My ?? "NULL"})");
-                    isSuccess = TryEquipItem(applianceItemHeld);
+                    bool isFromContainer;
+                    // Item applianceItemHeld = itemInFront.Appliance.ItemHeld;
+                    Item applianceItemHeld = itemInFront.GetFromItemHeld(out isFromContainer);
+                    Debug.Log($"Inventory(PickupItem) : You are picking the item({applianceItemHeld?.Name_My??"NULL"}) that is on the appliance({itemInFront?.Name_My ?? "NULL"})");
+
+                    if (!isFromContainer)
+                    {
+                        isSuccess = TryEquipItem(applianceItemHeld);
+                    } else
+                    {
+                        Debug.Log($"Inventory(PickupItem): TODO Get from container will be done at a later point");
+                        // remove this if statement and just place as is
+                        // when making the functionality to get items out from container
+                    }
+
+
                     if (isSuccess)
                     {
-                        itemInFront.Appliance.RemoveItemHeld();
-                        itemInFront.RemoveSurfaceSprite();
-                        spriteToEquip = applianceItemHeld.Sprite_My;
+                        // Get mask sprite data of the item on top of appliance
+                        if (!isFromContainer)
+                        {
+                            maskRendererAssets = applianceItemHeld.GetMaskRendererSpriteAssets();
+                        }
+                        else
+                        {
+                            // remove this if statement and just place as is
+                            // when making the functionality to get items out from container
+                        }
+
+                        // Remove Appliance Item's Sprite (Surface Sprite & Mask Renderer sprite) & Data
+                        if (!isFromContainer)
+                        {
+                            itemInFront.RemoveSurfaceSprite();
+                            itemInFront.Appliance.RemoveItemHeld();
+                        }
+
+                        if (!isFromContainer)
+                        {
+                            spriteToEquip = applianceItemHeld.Sprite_My;
+                        } else
+                        {
+                            // remove this if statement and just place as is
+                            // when making the functionality to get items out from container
+                        }
+         
                     }
                 }
             }
@@ -241,7 +292,7 @@ public class Inventory : MonoBehaviour
             {
                 if (spriteToEquip != null)
                 {
-                    OnInventoryItemPickUp?.Invoke(spriteToEquip);
+                    OnInventoryItemPickUp?.Invoke(spriteToEquip, maskRendererAssets);
                 }
             }
         }
@@ -276,7 +327,7 @@ public class Inventory : MonoBehaviour
                 if (TryEquipItem(ItemList[0]))
                 {
                     ItemList.RemoveAt(0);
-                    OnInventoryItemPickUp?.Invoke(ItemHandItem.Sprite_My);
+                    OnInventoryItemPickUp?.Invoke(ItemHandItem.Sprite_My, ItemHandItem.GetMaskRendererSpriteAssets());
                     isSuccess = true;
                 }          
             } else
@@ -331,7 +382,7 @@ public class Inventory : MonoBehaviour
                 if (TryEquipItem(ToolList[0])) // Change Try Equip Tool? 
                 {
                     ToolList.RemoveAt(0);
-                    OnInventoryItemPickUp?.Invoke(ItemHandItem.Sprite_My);
+                    OnInventory ItemPickUp ?.Invoke(ItemHandItem.Sprite_My);
                     isSuccess = true;
                 }   
                 */
@@ -390,6 +441,23 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    /*
+    public bool TryEquipIntoToolHand(Item toolToSet)
+    {
+        bool retVal = false;
+        if (ToolHandItem == null)
+        {
+            ToolHandItem = toolToSet;
+            OnInventoryToolEquip?.Invoke(toolToSet.Sprite_My);
+            retVal = true;
+        } else
+        {
+            Debug.Log("Inventory(ToggleFetchTool): Cannot Set Tool. The Tool hand is full");
+        }
+        return retVal;
+    }
+    */
+
     private void SwapItemHandWithToolHand()
     {
         Debug.Log("Inventory(SwapItemHandWithToolHand)");
@@ -407,7 +475,7 @@ public class Inventory : MonoBehaviour
         else
         {
             ItemHandItem = ToolHandItem;
-            OnInventoryItemPickUp?.Invoke(ToolHandItem.Sprite_My);
+            OnInventoryItemPickUp?.Invoke(ToolHandItem.Sprite_My, ToolHandItem.GetMaskRendererSpriteAssets());
         }
 
         // Transfer Tool to ToolHand
@@ -424,4 +492,5 @@ public class Inventory : MonoBehaviour
         // Debug.Log($"After Swap: ItemHand:{ItemHandItem?.Name_My ?? " NULL"} - ToolHand{ToolHandItem?.Name_My ?? " NULL"}");
 
     }
+
 }

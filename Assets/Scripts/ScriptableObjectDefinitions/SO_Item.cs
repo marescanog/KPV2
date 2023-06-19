@@ -14,4 +14,5 @@ public class SO_Item : ScriptableObject
     public float size;
     public bool canDecay;
     public Vector3 surfaceDisplayPosition;
+    public Sprite surfaceDisplayMask;
 }

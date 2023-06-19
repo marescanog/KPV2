@@ -5,15 +5,17 @@ using UnityEngine;
 public class Food : MonoBehaviour
 {
     public int ItemID { get; private set; }
+    public SO_Food Default_Food_Data { get { return GameAssets.FoodDataReadOnly(ItemID); } }
+
+
     public List<Flavor> FlavorData { get; private set; }
     public float Amount { get; private set; }
     public float Temperature { get; private set; }
     public ChoppedState ChoppedState_curr { get; private set; }
-    public SO_Food Default_Food_Data { get { return GameAssets.FoodDataReadOnly(ItemID); } }
-
+    // To add currentProcessState -> which resets the process progress timer
+    //      To avoid bugs like using a different tool at first then switching the tool later
+    //      For Example fast mixer then switch to a slow knife keeping the same progress
     public float ProcessProgress { get; private set; }
-
-
 
 
     public bool IncrementProgress (float incrementVal)
@@ -39,7 +41,7 @@ public class Food : MonoBehaviour
         ProcessProgress = 0;
     }
 
-    // ??? Not sure if we'll need this below
+    // ??? Not sure if we'll need this below, I think we will need it later when creating an Item Data struct when object pooling will be implemented
     public void SetFoodData(Food foodData)
     {
         if (foodData != null)

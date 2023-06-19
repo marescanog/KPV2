@@ -26,7 +26,7 @@ public class HUD_Inventory : MonoBehaviour
         Inventory.OnInventoryToolDrop -= HideFromToolHand;
     }
 
-    private void DisplayOnItemHand(Sprite newSprite)
+    private void DisplayOnItemHand(Sprite newSprite, MaskRendererSpriteAssets maskRendererAssets)
     {
         if (!itemHand.isActiveAndEnabled)
         {

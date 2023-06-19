@@ -36,38 +36,91 @@ public class Appliance : MonoBehaviour
 
     public void RemoveItemHeld()
     {
+        ItemHeld.DisableProgressBar();
         ItemHeld = null;
+    }
+
+    private bool SetHeldItem(Item itemToHold)
+    {
+        ItemHeld = itemToHold;
+        itemToHold.DisableUICollider();
+        return true;
     }
 
     public bool TrySetItemHeld(Item newItem)
     {
+        bool retVal = false;
+
+        // check if there is an item 
         if (ItemHeld == null)
         {
-            ItemHeld = newItem;
-            newItem.DisableUICollider();
-            Debug.Log($"Appliance(TrySetItem) : Sucessfully set the item{newItem.Name_My} on the appliance surface");
-            return true;
+            // check if this appliance has a set item
+            // or add a new List for whitelist of attachments
+            if(ApplianceData_ReadOnly != null && ApplianceData_ReadOnly.attachmentWhiteList.Count > 0)
+            {
+                if (ApplianceData_ReadOnly.attachmentWhiteList.Contains(newItem.ItemID))
+                {
+                    retVal = SetHeldItem(newItem);
+                    Debug.Log($"Appliance(TrySetItem) : Sucessfully attached the item {newItem.Name_My} into the appliance");
+                } else
+                {
+                    Debug.Log($"Appliance(TrySetItem) : Item({newItem.Name_My}) is not in the appliance's attachment whiteList");
+                }
+            } else
+            {
+                retVal = SetHeldItem(newItem);
+                Debug.Log($"Appliance(TrySetItem) : Sucessfully set the item {newItem.Name_My} on the appliance surface");
+            }
         }
-        Debug.Log($"Appliance(TrySetItem) : Surface occupied. Unable to set the item{newItem.Name_My} on the appliance surface");
-        return false;
+        else
+        {
+            // Check if the appliance held item is in the whitelist for appliance tool attachments
+
+            // Add to the item held
+            Debug.Log($"Appliance(TrySetItem) : Add Item Held {newItem.Name_My} into the tool on the appliance surface");
+
+        }
+
+        if (retVal == false)
+        {
+            Debug.Log($"Appliance(TrySetItem) : Surface occupied. Unable to set the item{newItem.Name_My} on the appliance surface");
+        }
+
+
+        return retVal;
     }
 
-    // Maybe Delete the function below since it is a duplicate of the function above
-    public bool TrySetItemSurface(Item newItem)
+    public Item GetFromItemHeld(out bool isFromContainer, out MaskRendererSpriteAssets maskRendererAssets)
     {
-        if (ItemHeld == null)
+        // ApplianceData_ReadOnly
+        if (ItemHeld != null && ApplianceData_ReadOnly != null && ApplianceData_ReadOnly.attachmentWhiteList.Count > 0)
         {
-            ItemHeld = newItem;
-            newItem.DisableUICollider();
-            // myItemComponent?.SetSurfaceSprite(newItem.Sprite);
-            Debug.Log("Appliance(TrySetItemSurface) : Sucessfully set the item on the appliance surface");
-            return true;
+            if (ApplianceData_ReadOnly.attachmentWhiteList.Contains(ItemHeld.ItemID))
+            {
+                Item returnItem = ItemHeld.GetFromToolContainer();
+                isFromContainer = true;
+                maskRendererAssets = returnItem?.GetMaskRendererSpriteAssets();
+                return returnItem;
+            }
         }
-        Debug.Log("Appliance(TrySetItemSurface) : Surface occupied. Unable to set the item on the appliance surface");
-        return false;
+        maskRendererAssets = null;
+        isFromContainer = false;
+        return ItemHeld;
     }
 
-
+    public Item GetItemHeld(out MaskRendererSpriteAssets maskRendererAssets)
+    {
+        Item retval = null;
+        maskRendererAssets = null;
+        // ApplianceData_ReadOnly
+        if (ItemHeld != null && ApplianceData_ReadOnly != null)
+        {
+            maskRendererAssets = ItemHeld?.GetMaskRendererSpriteAssets();
+            retval = ItemHeld;
+            ItemHeld = null;
+        }
+        return retval;
+    }
 
     void OnDisable()
     {
@@ -150,7 +203,9 @@ public class Appliance : MonoBehaviour
                         if (itemToProcess.Food.IncrementProgress(incrementValue))
                         {
                             itemToProcess.Food.ChopItem(itemToProcess, myItemComponent);
-                        }
+                        }                
+                        
+                        itemToProcess.SetProgressBarValue(itemToProcess.Food.ProcessProgress/100f);
                     }
                 }
                 break;

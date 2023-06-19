@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     [SerializeField] private PlayerFaceDirectionUI _playerFaceDirectionUI; // temp
     [SerializeField] private Inventory _playerInventory;
     [SerializeField] private SpriteRenderer _itemOnHead;
+    [SerializeField] private MaskedItemManager _itemOnHeadMaskRenderer;
 
     private Vector2 _playerFaceDirection = new Vector2(1,0);
     // private bool _inventoryButtonPickedUpActive = false;
@@ -49,7 +50,6 @@ public class Player : MonoBehaviour
         _transform = GetComponent<Transform>();
         Inventory.OnInventoryItemPickUp += ShowItemOnHead;
         Inventory.OnInventoryItemDrop += HideItemOnHead;
-
         playerActionControls = new PlayerActionControls();
         playerActionControls.Player.Enable();
         PlayerActionControlSubscriptions();
@@ -159,9 +159,9 @@ public class Player : MonoBehaviour
         } else
         {
             TimeTickManager.OnTick -= IncrementUse;
-            _ItemInfront_cache = null;
             Debug.Log("Incrementing Stopped");
         }
+        _ItemInfront_cache = null;
         toolUseHoldPerformed = false;
     }
 
@@ -183,18 +183,27 @@ public class Player : MonoBehaviour
 
 
 
-    private void ShowItemOnHead(Sprite newSprite)
+    private void ShowItemOnHead(Sprite newSprite, MaskRendererSpriteAssets maskRendererAssets)
     {
         if (!_itemOnHead.enabled)
         {
             _itemOnHead.enabled = true;
+            
+        }
+        if (!_itemOnHeadMaskRenderer.enabled)
+        {
+            _itemOnHeadMaskRenderer.enabled = true;
         }
         _itemOnHead.sprite = newSprite;
+        _itemOnHeadMaskRenderer.CopySpriteAssets(maskRendererAssets);
     }
+
     private void HideItemOnHead()
     {
         _itemOnHead.sprite = GameAssets.i.placeholderSprite;
         _itemOnHead.enabled = false;
+        _itemOnHeadMaskRenderer.enabled = false;
+        _itemOnHeadMaskRenderer.DisableEraseAllSpriteRenderers();
     }
 
     private void Update()
@@ -224,45 +233,66 @@ public class Player : MonoBehaviour
 
     private void UseToolTap()
     {
+        _ItemInfront_cache = GetItemInFront();
         // Add Incrementally
-        if (_playerInventory && _playerInventory?.ToolHandItem)
+        if (_ItemInfront_cache != null && _ItemInfront_cache.ItemCategory_My == ItemCategory.Appliance)
         {
-            // _playerInventory?.ToolHandItem?.UseTool(GetItemInFront());
-            Item itemInFront = GetItemInFront();
-            if (itemInFront != null && itemInFront.ItemCategory_My == ItemCategory.Appliance)
+            if (_playerInventory && _playerInventory?.ToolHandItem)
             {
                 Debug.Log("Player(UseTool): Tap (Increment by X Amount)");
-                itemInFront.Appliance.Use(GameAssets.ToolDataReadOnly(_playerInventory.ToolHandItem.ItemID), 10);
-            } else
+                _ItemInfront_cache.Appliance.Use(GameAssets.ToolDataReadOnly(_playerInventory.ToolHandItem.ItemID), 10);
+            }
+            else
             {
-                Debug.Log("Player(UseTool): Item in front is NOT an appliance");
+                Debug.Log("Player(OnUseTool): No Tool Equipped. Press hold to detach tool");
             }
         }
         else
         {
-            Debug.Log("Player(OnUseTool): No Tool Equipped");
+            Debug.Log("Player(UseTool): Player is NOT in front of an appliance");
         }
     }
 
     private void UseToolHold()
     {
-        // Start a Timer
-        if (_playerInventory && _playerInventory?.ToolHandItem)
+        _ItemInfront_cache = GetItemInFront();
+        if (_ItemInfront_cache != null && _ItemInfront_cache.ItemCategory_My == ItemCategory.Appliance)
         {
-            _ItemInfront_cache = GetItemInFront();
-            if (_ItemInfront_cache != null && _ItemInfront_cache.ItemCategory_My == ItemCategory.Appliance)
+            // Start a Timer
+            if (_playerInventory && _playerInventory?.ToolHandItem)
             {
-                Debug.Log("Player(UseTool): Hold (Increment by Timer)");
-                TimeTickManager.OnTick += IncrementUse;
+                // use only if the tool is in the item's tool whitelist
+                // if not then try equipping the item into tool hand
+                    // Add an If for UseToolWithoutAppliance = // Trigger hold, if it has a trigger hold action use, then 
+                    // it would trigger that (example, bowl pour or pour other)
+                if (_ItemInfront_cache.IsInToolWhiteList(_playerInventory.ToolHandItem.ItemID))
+                {
+                    Debug.Log("Player(UseTool): Hold (Increment by Timer)");
+                    TimeTickManager.OnTick += IncrementUse;
+                } else
+                {
+                    Debug.Log("Player(OnUseTool): Not int tool whitelist");
+                    TryDetachToolFromAppliance();
+                }
+
             }
             else
             {
-                Debug.Log("Player(UseToolHold): Item in front is NOT an appliance");
-            }     
+                Debug.Log("Player(OnUseTool): No Tool Equipped");
+                TryDetachToolFromAppliance();
+            }
         }
         else
         {
-            Debug.Log("Player(OnUseTool): No Tool Equipped");
+            // For now if bowl, it will just pour onto the ground and not counter
+            Debug.Log("Player(OnUseTool): Player is NOT in front of an appliance");
+            if (_playerInventory.ToolHandItem != null)
+            {
+                if (_playerInventory.ToolHandItem.UseToolWithoutAppliance(PlayerPositionWithOffset))
+                {
+                    Debug.Log("Player(OnUseTool): Player has a tool equipped which can be used without appliance");
+                }
+            } 
         }
     }
 
@@ -274,7 +304,36 @@ public class Player : MonoBehaviour
             _ItemInfront_cache.Appliance.Use(GameAssets.ToolDataReadOnly(_playerInventory.ToolHandItem.ItemID), 5);
         }
     }
+    private void TryDetachToolFromAppliance()
+    {
+        // check if player item hand is empty
+        if (_playerInventory.ItemHandItem == null)
+        {
+            MaskRendererSpriteAssets mrSa = null;
+            Item detachedTool = _ItemInfront_cache.TryDetachToolFromAppliance(out mrSa);
+            if (detachedTool != null)
+            {
+                Debug.Log($"Player(OnUseTool): Successfully Detached tool ({detachedTool?.Name_My}) from appliance");
+                if (_playerInventory.PickupItem(detachedTool, false))
+                {
+                    Debug.Log($"Player(OnUseTool): Successfully Equipped tool ({detachedTool?.Name_My}) into item hand");
+                }
+            }
+            else
+            {
+                Debug.Log("Player(OnUseTool): No tool attached to appliance.");
+            }
+        }
+        else
+        {
+            Debug.Log($"Player(OnUseTool): Item hand full, cannot detach tool from appliance");
+        }
+    }
 
+
+
+    // I don't know who is using this, delete later if I cant figure it out
+    /*
     private void OnUseTool()
     {
         // Go Use Tool
@@ -288,6 +347,7 @@ public class Player : MonoBehaviour
             Debug.Log("Player(OnUseTool): No Tool Equipped");
         }
     }
+    */
 
     private void OnToolToggle()
     {
@@ -341,42 +401,15 @@ public class Player : MonoBehaviour
     private void OnPickupHold()
     {
         Debug.Log("Player (OnPickupHold)");
-        // PickupAppliance(); // TODO Erase Function
         if (_playerInventory)
         {
             _playerInventory?.PickupItem(GetItemInFront(), true);
-        }
-    }
-
-    // TODO (CLEANUP): ERASE PickupAppliance FUNCTION (Not used anywhere else just used as reference)
-    private void PickupAppliance()
-    {
-        // Offset the transform position by half players height since the position starts at the feet of the player
-        RaycastHit2D rayCastHit = Physics2D.Raycast(_transform.position + _interactOffsetStartDist, _playerFaceDirection, _interactDist, LayerMask.GetMask("Item"));
-        // DebugDrawRayCastLine();
-        Item item = rayCastHit ? rayCastHit.collider.gameObject.GetComponent<Item>() : null;
-
-        if (item)
-        {
-            // Debug.Log("Player(OnInteract) raycasthit: " + rayCastHit.collider.name);
-            Debug.Log("Player(OnPickupHold) raycasthit: " + (rayCastHit.collider?.gameObject?.name ?? rayCastHit.collider?.name));
-
-            if (item && item?.Appliance?.isActiveAndEnabled == true)
-            {
-                // Add appliance function TryEquipAppliance -> Make sure appliance is off? or if appliance can be equipped while running, write in ondisable code?
-
-                Debug.Log("Player(OnPickupHold) : You are picking up an appliance");
-
-                _playerInventory?.TryEquipItem(item); // returns a bool true if equipped and false if not
-            }
-
         }
     }
     
     private void OnDropPickupItem()
     {
         Debug.Log("Player (OnDropPickupItem)");
-        // PickupDrop(); // TODO Erase Function
         if (_playerInventory)
         {
             Item itemInFront = GetItemInFront();          
@@ -394,80 +427,15 @@ public class Player : MonoBehaviour
                 {
                     // Update Player UI on Pickup Success
                     // Sprite associated with the drop/pickup -> from Item in front  
+                    
+                    if (itemInFront != null)
+                    {
+                        // _itemOnHeadMaskRenderer.CopySpriteAssets(itemInFront.GetMaskRendererSpriteAssets());
+                    }
+                    
                 }
             }
         } 
-    }
-
-    // TODO (CLEANUP): ERASE PICKUP DROP FUNCTION (Not used anywhere else just used as reference)
-    private void PickupDrop()
-    {
-        // Offset the transform position by half players height since the position starts at the feet of the player
-        Vector3 playerPosition = _transform.position + _interactOffsetStartDist;
-
-        RaycastHit2D rayCastHit = Physics2D.Raycast(playerPosition, _playerFaceDirection, _interactDist, LayerMask.GetMask("Item"));
-        // DebugDrawRayCastLine();
-        Item itemInFront = rayCastHit ? rayCastHit.collider?.gameObject?.GetComponent<Item>() : null;
-
-        if (_playerInventory != null)
-        {
-            // 1 DROP ITEM
-            if (_playerInventory?.ItemHandItem)
-            {
-                Debug.Log("Player(OnDropPickupItem): 1 - player has item equipped");
-                if (itemInFront)
-                {
-                    Debug.Log("Player(OnDropPickupItem): 1.1 - item is in front of player");
-                    if (itemInFront.Appliance.isActiveAndEnabled)
-                    {
-                        /*
-                            if appliance has tool attached (bowl or whatever)
-                                    if players current item is food
-                                        add to appliance (bowl or whatever)
-                                    if players current item is material
-                                        if fuel is allowed to be added to appliance
-                                            add fuel
-                            if appliance has no tool attached
-                                    if players current item is tool
-                                        if tool is allowed as an attachment to the appliance
-                                            Attach tool
-                                    if players current item is food
-                                        if appliance allows food to be added straight
-                                            add food 
-                        */
-                    }
-                    else if (itemInFront.Tool.isActiveAndEnabled)
-                    {
-
-                    }
-                }
-                else
-                {
-                    Debug.Log("Player(OnDropPickupItem): 1.2 - item is not in front of player");
-                    // check if there is a wall or something else in front of the player where we cant put item
-                    int hits = Physics2D.RaycastNonAlloc(playerPosition, _playerFaceDirection, m_Results);
-                    Debug.Log($"RaycastNonAlloc hits {hits}");
-                    if (hits <= 1)
-                    {
-                        Debug.Log("Drop Item");
-                    }
-                }
-            }
-            // 2 PICKUP ITEM
-            else
-            {
-                Debug.Log("Player(OnDropPickupItem): 2 - Player has no item equipped");
-                /* //pickup code
-                if (item)
-                {
-                    // Debug.Log("Player(OnDropPickupItem) raycasthit: " + rayCastHit.collider.name);
-                    Debug.Log("Player(OnDropPickupItem) raycasthit: " + rayCastHit.collider.gameObject.name);
-
-                }
-                //         _playerInventory.UnequipItem();
-                */
-            }
-        }
     }
 
     private void DebugDrawRayCastLine()
